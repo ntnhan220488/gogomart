@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+    <default>
+        <reference name="head">
+            <!--            
+            <action method="removeItem"><type>css</type><name>css/styles-ie.css</name></action>
+
+            <action method="addCss"><stylesheet>css/bootstrap.css</stylesheet></action>
+            <action method="addCss"><stylesheet>css/bootstrap-responsive.css</stylesheet></action>
+            <action method="addItem"><type>skin_js</type><name>js/jquery-1.7.2.min.js</name></action>
+            <action method="addItem"><type>skin_js</type><name>js/bootstrap.js</name></action>
+            -->
+        </reference>
+        <reference name="top_slider">
+            <block type="cms/block"  name="showcase">
+                <action method="setBlockId">
+                    <block_id>showcase</block_id>
+                </action>
+            </block> 
+        </reference>
+        <remove name="right.newsletter"/>
+        <remove name="tags_popular"/>
+        <remove name="paypal.partner.right.logo"/>
+    </default>
+    <cms_index_index>
+        <reference name="left">
+            <block type="catalog/navigation" before="-" name="catalog.sidebar" template="catalog/navigation/sidebar.phtml"/>
+        </reference>
+        <reference name="content">
+            <block type="catalog/product_new" name="home.product.new" alias="product_new" template="catalog/product/new.phtml" before="-">
+                <action method="setProductsCount"><count>3</count></action>
+                <action method="addPriceBlockType">
+                    <type>bundle</type>
+                    <block>bundle/catalog_product_price</block>
+                    <template>bundle/catalog/product/price.phtml</template>
+                </action>
+            </block>
+        </reference>
+    </cms_index_index>
+    <customer_account>
+        <reference name="left">
+            <remove name="catalog.compare.sidebar"/>
+            <remove name="cart_sidebar"/>
+        </reference>
+    </customer_account>
+</layout>

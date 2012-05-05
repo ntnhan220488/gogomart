@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <modules>
+        <GoGoMart_Template>
+            <version>1.0.0</version>
+        </GoGoMart_Template>
+    </modules>
+    <global>
+        <resources>
+            <templatef002_setup>
+                <setup>
+                    <module>TM_Templatef002</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </templatef002_setup>
+        </resources>
+    </global>
+</config>
