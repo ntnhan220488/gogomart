@@ -11,6 +11,20 @@
             <action method="addItem"><type>skin_js</type><name>js/bootstrap.js</name></action>
             -->
         </reference>
+        <reference name="header">
+            <reference name="top.links">
+                <action method="addLink" translate="label title">
+                    <label>Home Page</label>
+                    <url>/</url>
+                    <title>Home Page</title>
+                    <prepare/>
+                    <urlParams/>
+                    <position>01</position>
+                </action>
+            </reference>
+            <remove name="store_language"/>
+            <block type="page/switch" name="store_flag" as="store_flag" template="page/switch/flags.phtml"/>
+        </reference>
         <reference name="top_slider">
             <block type="cms/block"  name="showcase">
                 <action method="setBlockId">
@@ -43,4 +57,16 @@
             <remove name="cart_sidebar"/>
         </reference>
     </customer_account>
+    <customer_logged_out>
+        <reference name="top.links">
+            <action method="addLink" translate="label title">
+                <label>Register</label>
+                <url helper="customer/getRegisterUrl"/>
+                <title>Register</title>
+                <prepare/>
+                <urlParams/>
+                <position>90</position>
+            </action>
+        </reference>
+    </customer_logged_out>
 </layout>
