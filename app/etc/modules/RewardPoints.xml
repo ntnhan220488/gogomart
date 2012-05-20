@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+	<modules>
+		<Rewardpoints>
+			<active>true</active>
+			<codePool>community</codePool>
+		</Rewardpoints>
+	</modules>
+</config>
