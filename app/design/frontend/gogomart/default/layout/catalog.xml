@@ -61,7 +61,7 @@ Default layout, loads most of the pages
             </block>
         </reference>
         <reference name="right">
-            <block type="catalog/product_compare_sidebar" before="cart_sidebar" name="catalog.compare.sidebar" template="catalog/product/compare/sidebar.phtml"/>
+            <block type="catalog/product_compare_sidebar" after="right.reports.product.viewed" name="catalog.compare.sidebar" template="catalog/product/compare/sidebar.phtml"/>
             <!--   <block type="core/template" name="right.permanent.callout" template="callouts/right_col.phtml"/> -->
         </reference>
         <reference name="footer_links">
@@ -113,8 +113,12 @@ Category layered navigation layout
 
     <catalog_category_layered translate="label">
         <label>Catalog Category (Anchor)</label>
-        <reference name="left">
-            <block type="catalog/layer_view" name="catalog.leftnav" after="currency" template="catalog/layer/view.phtml"/>
+        <!-- change to 2columns-right layout-->
+        <reference name="root">
+            <action method="setTemplate"><template>page/2columns-right.phtml</template></action>
+        </reference>
+        <reference name="right">
+            <block type="catalog/layer_view" name="catalog.leftnav" after="cart_sidebar" template="catalog/layer/view.phtml"/>
         </reference>
         <reference name="content">
             <block type="catalog/category_view" name="category.products" template="catalog/category/view.phtml">

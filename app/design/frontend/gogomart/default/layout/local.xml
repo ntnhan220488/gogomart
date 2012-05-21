@@ -46,9 +46,12 @@
     </default>
     <!-- Catalog -->
     <catalog_category_layered>
-        <reference name="left">
+        <!--
+        <reference name="right">
             <block type="catalog/navigation" before="-" name="catalog.sidebar" template="catalog/navigation/sidebar.phtml"/>
         </reference>
+        -->
+        
     </catalog_category_layered>
     <!-- CMS -->
     <cms_index_index>
