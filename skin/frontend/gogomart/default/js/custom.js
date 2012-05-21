@@ -1,6 +1,6 @@
 $(document).ready(function(){
    $(".block-viewed .block-content").hide();
-   $(".block-viewed .block-title").hover(
+   $(".block-viewed").hover(
         function(){$(".block-viewed .block-content").show();},
         function(){$(".block-viewed .block-content").hide();}
     );
