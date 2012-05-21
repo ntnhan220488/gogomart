@@ -619,6 +619,7 @@ tr.summary-details-excluded { font-style:italic; }
 /* Mini Products List */
 .mini-products-list .product-image { float:left; width:50px; border:1px solid #a9a9a9; }
 .mini-products-list .product-details { margin-left:60px; }
+.mini-products-list .product .product-details .price-box .price {color:#ff0000};
 
 /* Block: Account */
 .block-account {  }

@@ -10,6 +10,8 @@
             <action method="addItem"><type>skin_js</type><name>js/jquery-1.7.2.min.js</name></action>
             <action method="addItem"><type>skin_js</type><name>js/bootstrap.js</name></action>
             -->
+            <action method="addItem"><type>skin_js</type><name>js/jquery-1.7.2.min.js</name></action>
+            <action method="addItem"><type>skin_js</type><name>js/custom.js</name></action>
         </reference>
         <reference name="header">
             <reference name="top.links">
@@ -32,10 +34,22 @@
                 </action>
             </block> 
         </reference>
+        
+        <!-- remove some blocks here -->
         <remove name="right.newsletter"/>
         <remove name="tags_popular"/>
         <remove name="paypal.partner.right.logo"/>
+        <remove name="left.permanent.callout-1"/>
+        <remove name="left.permanent.callout-2"/>
+        <remove name="right.poll"/>
     </default>
+    <!-- Catalog -->
+    <catalog_category_layered>
+        <reference name="left">
+            <block type="catalog/navigation" before="-" name="catalog.sidebar" template="catalog/navigation/sidebar.phtml"/>
+        </reference>
+    </catalog_category_layered>
+    <!-- CMS -->
     <cms_index_index>
         <reference name="left">
             <block type="catalog/navigation" before="-" name="catalog.sidebar" template="catalog/navigation/sidebar.phtml"/>
