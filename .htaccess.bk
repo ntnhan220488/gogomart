@@ -1,4 +1,0 @@
-AuthType Basic
-AuthName "GoGoMart Demo"
-AuthUserFile /etc/apache2/passwd
-Require user gogomart
