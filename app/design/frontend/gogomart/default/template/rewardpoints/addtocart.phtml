@@ -1,0 +1,11 @@
+<?php $_product = $this->getProduct() ?>
+<p class="j2t-loyalty-points"><?php echo $this->__("With this product, you earn <span id='j2t-pts'>%d</span> loyalty point(s).", Mage::helper('rewardpoints/data')->getProductPoints($_product));?></p>
+<?php //$this->getConfigurableProducts($_product);?>
+<script type="text/javascript">
+    var j2t_points = <?php echo Mage::helper('rewardpoints/data')->getProductPoints($_product) ?>;
+    document.observe("dom:loaded", function() {
+        if ($('qty')){
+            Event.observe($('qty'), 'change', function(){ if($('qty').value > 0){ $('j2t-pts').innerHTML = j2t_points * $('qty').value; } else {$('j2t-pts').innerHTML = j2t_points;} });
+        }
+    });
+</script>
