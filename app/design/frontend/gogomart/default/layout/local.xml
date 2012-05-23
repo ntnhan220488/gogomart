@@ -41,15 +41,33 @@
         <remove name="left.permanent.callout-1"/>
         <remove name="left.permanent.callout-2"/>
         <remove name="right.poll"/>
-        <remove name="catalog.leftnav"/>
         <remove name="currency"/>
     </default>
     <!-- Catalog -->
+    
+    <catalog_category_layered>
+        <remove name="left"/>
+        <reference name="right">
+            <block type="catalog/navigation" after="catalog.leftnav" name="catalog.sidebar" template="catalog/navigation/sidebar.phtml"/>
+        </reference>
+    </catalog_category_layered>
+    
+    <catalog_category_default>
+        <remove name="left"/>
+        <reference name="right">
+            <block type="catalog/navigation" after="catalog.leftnav" name="catalog.sidebar" template="catalog/navigation/sidebar.phtml"/>
+        </reference>
+    </catalog_category_default>    
     <!-- CMS -->
     <cms_index_index>
         <reference name="left">
             <block type="catalog/navigation" before="-" name="catalog.sidebar" template="catalog/navigation/sidebar.phtml"/>
         </reference>
+        <!--
+        <reference name="right">
+            <block type="catalog/layer_view" name="catalog.leftnav" after="cart_sidebar" template="catalog/layer/view.phtml"/>
+        </reference>
+        -->
         <reference name="content">
             <block type="catalog/product_new" name="home.product.new" alias="product_new" template="catalog/product/new.phtml" before="-">
                 <action method="setProductsCount"><count>3</count></action>
