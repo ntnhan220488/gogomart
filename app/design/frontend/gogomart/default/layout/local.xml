@@ -41,16 +41,10 @@
         <remove name="left.permanent.callout-1"/>
         <remove name="left.permanent.callout-2"/>
         <remove name="right.poll"/>
+        <remove name="catalog.leftnav"/>
+        <remove name="currency"/>
     </default>
     <!-- Catalog -->
-    <catalog_category_layered>
-        <!--
-        <reference name="right">
-            <block type="catalog/navigation" before="-" name="catalog.sidebar" template="catalog/navigation/sidebar.phtml"/>
-        </reference>
-        -->
-        
-    </catalog_category_layered>
     <!-- CMS -->
     <cms_index_index>
         <reference name="left">
