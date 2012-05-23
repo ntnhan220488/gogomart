@@ -192,6 +192,9 @@ Product view
         <reference name="root">
             <action method="setTemplate"><template>page/2columns-right.phtml</template></action>
         </reference>
+        <reference name="right">
+            <block type="catalog/navigation" after="cart_sidebar" name="catalog.sidebar" template="catalog/navigation/sidebar.phtml"/>
+        </reference>
         <reference name="head">
             <action method="addJs"><script>varien/product.js</script></action>
             <action method="addJs"><script>varien/configurable.js</script></action>
