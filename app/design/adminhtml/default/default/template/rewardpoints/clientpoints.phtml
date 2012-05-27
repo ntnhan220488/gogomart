@@ -16,18 +16,20 @@
  * @copyright  Copyright (c) 2009 J2T DESIGN. (http://www.j2t-design.com)
  * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
-class Rewardpoints_Adminhtml_ImportController extends Mage_Adminhtml_Controller_action
-{
-    protected function _initAction() {
-            $this->loadLayout()
-                    ->_setActiveMenu('rewardpoints/referrals')
-                    ->_addBreadcrumb(Mage::helper('rewardpoints')->__('Referrals'), Mage::helper('rewardpoints')->__('Import'));
-            return $this;
-	}
+?>
+<div class="entry-edit">
+    <div class="entry-edit-head"><h4 class="icon-head head-customer-view"><?php echo Mage::helper('rewardpoints')->__('Reward Points') ?></h4></div>
+    <fieldset>
+        <table class="box-left">
+            <tr>
+                <td><strong><?php echo $this->__('Points Balance:') ?></strong>
+                <?php echo $this->__('%d points', $this->getCurrentBalance()) ?></td>
+            </tr>
+	</table>
+    </fieldset>
+</div>
 
-	public function indexAction() {
-            $this->_initAction()
-                ->_addContent($this->getLayout()->createBlock('rewardpoints/adminhtml_import'))
-                ->renderLayout();
-	}
-}
+<div class="entry-edit">
+<?php echo $this->getFormObject()->getHtml() ?>
+</div>
+<?php echo $this->getChildHtml('grid') ?>
