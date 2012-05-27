@@ -24,6 +24,7 @@ class Rewardpoints_Block_Dashboard extends Mage_Core_Block_Template
         $this->setTemplate('rewardpoints/dashboard_points.phtml');
     }
 
+
     public function getPointsCurrent(){
         $customerId = Mage::getModel('customer/session')->getCustomerId();
         $reward_model = Mage::getModel('rewardpoints/stats');

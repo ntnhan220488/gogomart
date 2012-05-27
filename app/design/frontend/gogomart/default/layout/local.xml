@@ -79,6 +79,8 @@
             </block>
         </reference>
     </cms_index_index>
+    
+    <!-- Customer -->
     <customer_account>
         <reference name="left">
             <remove name="catalog.compare.sidebar"/>
@@ -97,4 +99,14 @@
             </action>
         </reference>
     </customer_logged_out>
+    <customer_account>
+        <reference name="customer_account_navigation">
+            <action method="removeLinkByName"><name>recurring_profiles</name></action>
+            <action method="removeLinkByName"><name>billing_agreements</name></action>
+            <action method="removeLinkByName"><name>downloadable_products</name></action>
+            <action method="removeLinkByName"><name>reviews</name></action>
+            <action method="removeLinkByName"><name>tags</name></action>
+            <action method="removeLinkByName"><name>OAuth Customer Tokens</name></action>
+        </reference>
+    </customer_account>
 </layout>

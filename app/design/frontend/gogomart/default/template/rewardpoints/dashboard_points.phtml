@@ -18,11 +18,26 @@
  */
  ?>
 
-<?php echo $this->__('Your Points') ?>: <?php echo sprintf('%d', $this->getPointsCurrent()); ?>
-<br/>
-<?php echo $this->__('Total Accumulated Points') ?>: <?php echo sprintf('%d', $this->getPointsReceived()); ?>
-<br/>
-<?php echo $this->__('Total Points Spent') ?>: <?php echo sprintf('%d', $this->getPointsSpent()); ?>
-<br/>
-<?php echo $this->__('Points waiting for validation') ?>: <?php echo sprintf('%d', $this->getPointsWaitingValidation()); ?>
-<br/>
+<table class="data-table" id="my-rewardpoints-table">
+        <col />
+        <col width="1" />
+        <col width="1" />
+        <col width="1" />
+        <thead>
+            <tr>
+                <th><?php echo $this->__('Your Points') ?></th>
+                <th><?php echo $this->__('Total Accumulated Points') ?></th>
+                <th><?php echo $this->__('Total Points Spent') ?></th>
+                <th><?php echo $this->__('Points waiting for validation') ?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><?php echo $this->getPointsCurrent(); ?></td>
+                <td><?php echo $this->getPointsReceived(); ?></td>
+                <td><?php echo $this->getPointsSpent(); ?></td>
+                <td><?php echo $this->getPointsWaitingValidation(); ?></td>
+            </tr>
+        </tbody>
+    </table>
+    <script type="text/javascript">decorateTable('my-rewardpoints-table')</script>

@@ -77,14 +77,16 @@ class RewardPoints_Model_Rule extends Mage_SalesRule_Model_Rule
            
             //$rules = Mage::getModel('rewardpoints/rules')->getPointsByRule();
             $cart_amount = 0;
-            
+
+            $attribute_restriction = Mage::getStoreConfig('rewardpoints/default/process_restriction', Mage::app()->getStore()->getId());
+
             foreach ($items as $_item){
                 $_product = Mage::getModel('catalog/product')->load($_item->getProductId());
 
                 $catalog_points = Mage::getModel('rewardpoints/catalogpointrules')->getAllCatalogRulePointsGathered($_product);
                 if ($catalog_points === false){
                     continue;
-                } else {
+                } else if(!$attribute_restriction) {
                     $rewardPoints += (int)$catalog_points * $_item->getQty();
                 }
 
@@ -95,13 +97,11 @@ class RewardPoints_Model_Rule extends Mage_SalesRule_Model_Rule
                         $rewardPoints += (int)$product_points * $_item->getQty();
 
                     }
-                } else {
+                } else if(!$attribute_restriction) {
                     $price = $_item->getRowTotal() + $_item->getTaxAmount() - $_item->getDiscountAmount();
                     $rewardPoints += (int)Mage::getStoreConfig('rewardpoints/default/money_points', Mage::app()->getStore()->getId()) * $price;
                 }
                 $cart_amount += $_item->getRowTotal() + $_item->getTaxAmount() - $_item->getDiscountAmount();
-
-               
             }
             
             //get points cart rule

@@ -30,25 +30,53 @@ class Rewardpoints_Block_Adminhtml_Clientpoints_Grid extends Mage_Adminhtml_Bloc
   protected function _prepareCollection()
   {
 
-      $collection = Mage::getResourceModel('rewardpoints/rewardpoints_collection');
+      /*$collection = Mage::getResourceModel('rewardpoints/rewardpoints_collection');
+      
       $this->setCollection($collection);
+
+      if (!Mage::app()->isSingleStoreMode()) {
+            $this->getCollection()->addStoreData();
+        }
+
       return parent::_prepareCollection();
+      */
+
+
+
+      $collection = Mage::getResourceModel('rewardpoints/rewardpoints_collection');
+        $this->setCollection($collection);
+        parent::_prepareCollection();
+
+        if (!Mage::app()->isSingleStoreMode()) {
+            $this->getCollection()->addStoreData();
+        } 
+
+        return $this;
+
+
+
+
   }
 
+  
   protected function _prepareColumns()
   {
+      $model = Mage::getModel('rewardpoints/stats');
+
       $this->addColumn('id', array(
           'header'    => Mage::helper('rewardpoints')->__('id'),
           'align'     =>'right',
           'width'     => '50px',
           'index'     => 'rewardpoints_account_id',
+          'type'  => 'number',
       ));
 
       $this->addColumn('client_id', array(
-          'header'    => Mage::helper('rewardpoints')->__('Client'),
+          'header'    => Mage::helper('rewardpoints')->__('Client ID'),
           'align'     =>'right',
           'index'     => 'customer_id',
           'width'     => '50px',
+          'type'  => 'number',
       ));
 
       $this->addColumn('email', array(
@@ -74,11 +102,7 @@ class Rewardpoints_Block_Adminhtml_Clientpoints_Grid extends Mage_Adminhtml_Bloc
         
 
 /*
-      $this->addColumn('email', array(
-          'header'    => Mage::helper('rewardpoints')->__('Customer email'),
-          'align'     => 'left',
-          'index'     => 'email',
-      ));
+      
 */
       $this->addColumn('points_current', array(
           'header'    => Mage::helper('rewardpoints')->__('Accumulated points'),
@@ -95,11 +119,31 @@ class Rewardpoints_Block_Adminhtml_Clientpoints_Grid extends Mage_Adminhtml_Bloc
           'filter'    => false,
       ));
 
+      
 
+      if (!Mage::app()->isSingleStoreMode()) {
+            $this->addColumn('store_id', array(
+                'header'    => Mage::helper('rewardpoints')->__('Stores'),
+                'index'     => 'stores',
+                'type'      => 'store',
+                'store_view' => false,
+                'sortable'   => false,
+            ));
+        }
+
+
+
+
+
+
+
+      
+      $this->addExportType('*/*/exportCsv', Mage::helper('customer')->__('CSV'));
+      $this->addExportType('*/*/exportXml', Mage::helper('customer')->__('XML'));
 
       return parent::_prepareColumns();
   }
-  
+
   
 
   protected function _prepareMassaction()
@@ -121,8 +165,6 @@ class Rewardpoints_Block_Adminhtml_Clientpoints_Grid extends Mage_Adminhtml_Bloc
         $this->getCollection()->walk('afterLoad');
         parent::_afterLoadCollection();
     }
-
-
 
 
 

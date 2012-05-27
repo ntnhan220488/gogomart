@@ -4,7 +4,8 @@ class Rewardpoints_Model_Review extends Mage_Review_Model_Review
     
     public function aggregate()
     {
-        if ($this->isApproved()){
+        //if ($this->isApproved()){
+        if ($this->getStatusId() == self::STATUS_APPROVED){
             if ($pointsInt = Mage::getStoreConfig('rewardpoints/registration/review_points', Mage::app()->getStore()->getId())){
                 //ret review id... $this->getId();
                 //check store id

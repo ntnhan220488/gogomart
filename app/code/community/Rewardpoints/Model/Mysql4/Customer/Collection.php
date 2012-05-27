@@ -18,32 +18,49 @@
  */
 class Rewardpoints_Model_Mysql4_Customer_Collection extends Mage_Customer_Model_Entity_Customer_Collection
 {
-    protected function _initSelect()
+    public function restrictRewardPoints()
     {
-        parent::_initSelect();
+
+        $statuses = Mage::getStoreConfig('rewardpoints/default/valid_statuses', Mage::app()->getStore()->getId());
+        $status_field = Mage::getStoreConfig('rewardpoints/default/status_used', Mage::app()->getStore()->getId());
+
+        $order_states = explode(",", $statuses);
+
+        //parent::_initSelect();
         $select = $this->getSelect();
         $select
             ->from($this->getTable('rewardpoints/rewardpoints_account'),array(new Zend_Db_Expr('SUM('.$this->getTable('rewardpoints/rewardpoints_account').'.points_current) AS all_points_accumulated'),new Zend_Db_Expr('SUM('.$this->getTable('rewardpoints/rewardpoints_account').'.points_spent) AS all_points_spent')))
             ->where($this->getTable('rewardpoints/rewardpoints_account').'.customer_id = e.entity_id');
 
+        
+        $sql_share = "";
+        if (class_exists (J2t_Rewardshare_Model_Stats)){
+            $sql_share = $this->getTable('rewardpoints/rewardpoints_account').".order_id = '".J2t_Rewardshare_Model_Stats::TYPE_POINTS_SHARE."' or";
+        }
 
         if (version_compare(Mage::getVersion(), '1.4.0', '>=')){
-            $select->where(" (".$this->getTable('rewardpoints/rewardpoints_account').".order_id = '".Rewardpoints_Model_Stats::TYPE_POINTS_REVIEW."' or '".Rewardpoints_Model_Stats::TYPE_POINTS_ADMIN."' or ".$this->getTable('rewardpoints/rewardpoints_account').".order_id = '".Rewardpoints_Model_Stats::TYPE_POINTS_REGISTRATION."'
+            $select->where(" ($sql_share ".$this->getTable('rewardpoints/rewardpoints_account').".order_id = '".Rewardpoints_Model_Stats::TYPE_POINTS_REVIEW."' or '".Rewardpoints_Model_Stats::TYPE_POINTS_ADMIN."' or ".$this->getTable('rewardpoints/rewardpoints_account').".order_id = '".Rewardpoints_Model_Stats::TYPE_POINTS_REGISTRATION."'
                    or ".$this->getTable('rewardpoints/rewardpoints_account').".order_id in  (SELECT increment_id
                        FROM ".$this->getTable('sales/order')." AS orders
-                       WHERE orders.state IN ('processing','complete'))
-                 ) ");
+                       WHERE orders.$status_field IN (?))
+                 ) ", $order_states);
         } else {
             $table_sales_order = $this->getTable('sales/order').'_varchar';
-            $select->where(" (".$this->getTable('rewardpoints/rewardpoints_account').".order_id = '".Rewardpoints_Model_Stats::TYPE_POINTS_REVIEW."' or '".Rewardpoints_Model_Stats::TYPE_POINTS_ADMIN."' or ".$this->getTable('rewardpoints/rewardpoints_account').".order_id = '".Rewardpoints_Model_Stats::TYPE_POINTS_REGISTRATION."'
+            $select->where(" ($sql_share ".$this->getTable('rewardpoints/rewardpoints_account').".order_id = '".Rewardpoints_Model_Stats::TYPE_POINTS_REVIEW."' or '".Rewardpoints_Model_Stats::TYPE_POINTS_ADMIN."' or ".$this->getTable('rewardpoints/rewardpoints_account').".order_id = '".Rewardpoints_Model_Stats::TYPE_POINTS_REGISTRATION."'
                    or ".$this->getTable('rewardpoints/rewardpoints_account').".order_id in (SELECT increment_id
                                        FROM ".$this->getTable('sales/order')." AS orders
                                        WHERE orders.entity_id IN (
                                            SELECT order_state.entity_id
                                            FROM ".$table_sales_order." AS order_state
                                            WHERE order_state.value <> 'canceled'
-                                           AND order_state.value in ('processing','complete'))
-                                        ) ) ");
+                                           AND order_state.value in (?))
+                                        ) ) ", $order_states);
+        }
+
+
+        //v.2.0.0
+        if (Mage::getStoreConfig('rewardpoints/default/points_delay', Mage::app()->getStore()->getId())){
+            $this->getSelect()->where('( NOW() >= '.$this->getTable('rewardpoints/rewardpoints_account').'.date_start OR '.$this->getTable('rewardpoints/rewardpoints_account').'.date_start IS NULL)');
         }
         
         if (Mage::getStoreConfig('rewardpoints/default/points_duration', Mage::app()->getStore()->getId())){
@@ -52,6 +69,8 @@ class Rewardpoints_Model_Mysql4_Customer_Collection extends Mage_Customer_Model_
 
         $select->group($this->getTable('rewardpoints/rewardpoints_account').'.customer_id');
 
+        /*echo $this->getSelect()->__toString();
+        die;*/
         
         return $this;
     }

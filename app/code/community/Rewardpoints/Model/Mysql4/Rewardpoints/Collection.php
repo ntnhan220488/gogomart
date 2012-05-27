@@ -18,21 +18,46 @@
  */
 class Rewardpoints_Model_Mysql4_Rewardpoints_Collection extends Mage_Core_Model_Mysql4_Collection_Abstract
 {
+    protected $_selectedColumns = array(
+        'rewardpoints_account_id'   => 'rewardpoints_account_id',
+        'customer_id'               => 'customer_id',
+        'cust.email'                     => 'cust.email',
+        'order_id'                  => 'order_id',
+        'points_current'            => 'points_current',
+        'points_spent'              => 'points_spent',
+        'store_ids'       => 'main_table.store_id'
+    );
 
     public function _construct()
     {
         parent::_construct();
         $this->_init('rewardpoints/stats');
     }
+
+
     
+
     protected function _initSelect()
     {
-        parent::_initSelect();
+        /*parent::_initSelect();
+        
         $select = $this->getSelect();
         $select->join(
             array('cust' => $this->getTable('rewardpoints/customer_entity')),
             'customer_id = cust.entity_id'
         );
+        return $this;*/
+
+        $select = $this->getSelect();
+        //$select->from(array('main_table' => $this->getMainTable()), $this->_selectedColumns);
+        //$select->from(array('main_table' => $this->getTable('rewardpoints/stats')), $this->_selectedColumns);
+        $select->from(array('main_table' => $this->getResource()->getMainTable()), $this->_selectedColumns);
+
+        $select->join(
+            array('cust' => $this->getTable('rewardpoints/customer_entity')),
+            'main_table.customer_id = cust.entity_id'
+        );
+
         return $this;
     }
 
@@ -64,7 +89,7 @@ class Rewardpoints_Model_Mysql4_Rewardpoints_Collection extends Mage_Core_Model_
         );
 
         $this->getSelect()->where('ord.customer_id = ?', $customer_id);
-        $this->getSelect()->where('state in (?)', implode(',',$order_states));
+        $this->getSelect()->where('state in (?)', $order_states);
 
 
         return $this;
@@ -84,7 +109,8 @@ class Rewardpoints_Model_Mysql4_Rewardpoints_Collection extends Mage_Core_Model_
     
     public function addStoreFilter($id)
     {
-        $this->getSelect()->where('store_id = ?', $id);
+        //$this->getSelect()->where('main_table.store_id in (?)', $id);
+        $this->getSelect()->where('FIND_IN_SET(?, main_table.store_id) > 0', $id);
         return $this;
     }
     
@@ -93,4 +119,37 @@ class Rewardpoints_Model_Mysql4_Rewardpoints_Collection extends Mage_Core_Model_
         $this->group('main_table.customer_id');
         return $this;
     }*/
+
+
+
+    public function addStoreData()
+    {
+        foreach ($this as $item) {
+            $item->setStores(explode(',',$item->getStoreIds()));
+        }
+
+        return $this;
+    }
+
+
+    public function addFieldToFilter($field, $condition=null)
+    {
+        if ($field == 'stores') {
+            return $this->addStoresFilter($condition);
+        }
+        else {
+            return parent::addFieldToFilter($field, $condition);
+        }
+    }
+
+
+    public function addStoresFilter($store)
+    {
+        return $this->addStoreFilter($store);
+    }
+
+
+    
+
+
 }

@@ -2,140 +2,212 @@
 <config>
     <modules>
         <Rewardpoints>
-            <version>0.6.1</version>
+            <version>1.4.0</version>
             <depends>
                 <Mage_Customer />
                 <Mage_Checkout />
             </depends>
         </Rewardpoints>
     </modules>
-	<global>
-		<resources>
-			<rewardpoints_setup>
-				<setup>
-					<module>Rewardpoints</module>
-					<class>Mage_Core_Model_Resource_Setup</class>
-				</setup>
-				<connection><use>core_setup</use></connection>
-			</rewardpoints_setup>
-			<rewardpoints_write>
-				<connection><use>core_write</use></connection>
-			</rewardpoints_write>
-			<rewardpoints_read>
-				<connection><use>core_read</use></connection>
-			</rewardpoints_read>
-		</resources>
+    <global>
+        <resources>
+            <rewardpoints_setup>
+                <setup>
+                    <module>Rewardpoints</module>
+                    <class>Mage_Core_Model_Resource_Setup</class>
+                </setup>
+                <connection><use>core_setup</use></connection>
+            </rewardpoints_setup>
+            <rewardpoints_write>
+                <connection><use>core_write</use></connection>
+            </rewardpoints_write>
+            <rewardpoints_read>
+                <connection><use>core_read</use></connection>
+            </rewardpoints_read>
+        </resources>
 
 		
-		<models>
-			<rewardpoints>
-				<class>Rewardpoints_Model</class>
-                                <resourceModel>rewardpoints_mysql4</resourceModel>
-			</rewardpoints>
-                        <rewardpoints_mysql4>
-                            <class>Rewardpoints_Model_Mysql4</class>
-                            <entities>
-                                <rewardpoints_account>
-                                    <table>rewardpoints_account</table>
-                                </rewardpoints_account>
-                                <rewardpoints_referral>
-                                    <table>rewardpoints_referral</table>
-                                </rewardpoints_referral>
-                                <referral>
-                                    <table>rewardpoints_referral</table>
-                                </referral>
-                                <stats>
-                                    <table>rewardpoints_account</table>
-                                </stats>
-                                <rules>
-                                    <table>rewardpoints_rule</table>
-                                </rules>
-                                <customer_entity>
-                                    <table>customer_entity</table>
-                                </customer_entity>
-                                <pointrules>
-                                    <table>rewardpoints_pointrules</table>
-                                </pointrules>
-                                <catalogpointrules>
-                                    <table>rewardpoints_catalogrules</table>
-                                </catalogpointrules>
-                            </entities>
-                        </rewardpoints_mysql4>
+        <models>
+                <rewardpoints>
+                        <class>Rewardpoints_Model</class>
+                        <resourceModel>rewardpoints_mysql4</resourceModel>
+                </rewardpoints>
+                <rewardpoints_mysql4>
+                    <class>Rewardpoints_Model_Mysql4</class>
+                    <entities>
+                        <rewardpoints_account>
+                            <table>rewardpoints_account</table>
+                        </rewardpoints_account>
+                        <rewardpoints_referral>
+                            <table>rewardpoints_referral</table>
+                        </rewardpoints_referral>
+                        <referral>
+                            <table>rewardpoints_referral</table>
+                        </referral>
+                        <stats>
+                            <table>rewardpoints_account</table>
+                        </stats>
+                        <rules>
+                            <table>rewardpoints_rule</table>
+                        </rules>
+                        <customer_entity>
+                            <table>customer_entity</table>
+                        </customer_entity>
+                        <pointrules>
+                            <table>rewardpoints_pointrules</table>
+                        </pointrules>
+                        <catalogpointrules>
+                            <table>rewardpoints_catalogrules</table>
+                        </catalogpointrules>
+                    </entities>
+                </rewardpoints_mysql4>
 
-                        <salesrule>
-                            <rewrite>
-                                <validator>Rewardpoints_Model_Validator</validator>
-                            </rewrite>
-			</salesrule>
-
-
-                        <!-- Rewardpoints_Model_Review extends Mage_Review_Model_Review -->
-                        <review>
-                            <rewrite>
-                                <review>Rewardpoints_Model_Review</review>
-                            </rewrite>
-			</review>
+                <salesrule>
+                    <rewrite>
+                        <validator>Rewardpoints_Model_Validator</validator>
+                    </rewrite>
+                </salesrule>
 
 
-		</models>
+                <!-- Rewardpoints_Model_Review extends Mage_Review_Model_Review -->
+                <!--<review>
+                    <rewrite>
+                        <review>Rewardpoints_Model_Review</review>
+                    </rewrite>
+                </review>-->
+
+                <sales>
+                    <rewrite>
+                        <quote>Rewardpoints_Model_Quote</quote>
+                    </rewrite>
+                </sales>
+
+
+        </models>
                 
 		
-                <template>
-                    <email>
-                        <rewardpoints_registration_subscription_email_template translate="label"	module="rewardpoints">
-                            <label>Subscription</label>
-                            <file>rewardpoints_referral_subscribe.html</file>
-                            <type>html</type>
-                        </rewardpoints_registration_subscription_email_template>
-                        <rewardpoints_registration_confirmation_email_template translate="label"	module="rewardpoints">
-                            <label>Confirmation</label>
-                            <file>rewardpoints_referral_confirm.html</file>
-                            <type>html</type>
-                        </rewardpoints_registration_confirmation_email_template>
+        <template>
+            <email>
+                <rewardpoints_registration_subscription_email_template translate="label"	module="rewardpoints">
+                    <label>J2T Reward points Referral program Subscription</label>
+                    <file>rewardpoints_referral_subscribe.html</file>
+                    <type>html</type>
+                </rewardpoints_registration_subscription_email_template>
+                <rewardpoints_registration_confirmation_email_template translate="label"	module="rewardpoints">
+                    <label>J2T Reward points Referral program Confirmation</label>
+                    <file>rewardpoints_referral_confirm.html</file>
+                    <type>html</type>
+                </rewardpoints_registration_confirmation_email_template>
+                <rewardpoints_notification_notification_email_template>
+                    <label>J2T Reward points Notification</label>
+                    <file>rewardpoints_notification.html</file>
+                    <type>html</type>
+                </rewardpoints_notification_notification_email_template>
 
-                    </email>
-		</template>
-		
-		
-		<blocks>
-                    <rewardpoints>
-                        <class>Rewardpoints_Block</class>
-                    </rewardpoints>
-                </blocks>
-		
-            
-            <helpers>
-                <rewardpoints>
-                    <class>Rewardpoints_Helper</class>
-                </rewardpoints>
-            </helpers>
+            </email>
+        </template>
 
 
-            <events>
-                    <!--<sales_order_invoice_pay>
-                            <observers>
-                                    <rewardpoints>
-                                            <type>singleton</type>
-                                            <class>rewardpoints/observer</class>
-                                            <method>sales_order_invoice_pay</method>
-                                    </rewardpoints>
-                            </observers>
-                    </sales_order_invoice_pay>-->
+        <blocks>
+            <rewardpoints>
+                <class>Rewardpoints_Block</class>
+            </rewardpoints>
+        </blocks>
 
-                    <sales_quote_address_discount_item>
-                            <observers>
-                                    <rewardpoints>
+
+        <helpers>
+            <rewardpoints>
+                <class>Rewardpoints_Helper</class>
+            </rewardpoints>
+        </helpers>
+
+
+        <events>
+                <!--<sales_order_invoice_pay>
+                        <observers>
+                                <rewardpoints>
                                         <type>singleton</type>
-                                        <class>Rewardpoints_Model_Observer</class>
-                                        <method>applyDiscount</method>
-                                    </rewardpoints>
-                            </observers>
-                    </sales_quote_address_discount_item>
+                                        <class>rewardpoints/observer</class>
+                                        <method>sales_order_invoice_pay</method>
+                                </rewardpoints>
+                        </observers>
+                </sales_order_invoice_pay>-->
+
+                <model_save_after>
+                    <observers>
+                        <rewardpoints>
+                            <type>singleton</type>
+                            <class>Rewardpoints_Model_Observer</class>
+                            <method>processAddCallback</method>
+                        </rewardpoints>
+                    </observers>
+                </model_save_after>
 
 
-            </events>
-		
-	</global>
+                <customer_login>
+                    <observers>
+                        <rewardpoints>
+                            <type>singleton</type>
+                            <class>Rewardpoints_Model_Observer</class>
+                            <method>pointsRefresh</method>
+                        </rewardpoints>
+                    </observers>
+                </customer_login>
+
+                <customer_logout>
+                    <observers>
+                        <rewardpoints>
+                            <type>singleton</type>
+                            <class>Rewardpoints_Model_Observer</class>
+                            <method>pointsRefresh</method>
+                        </rewardpoints>
+                    </observers>
+                </customer_logout>
+
+                
+                <sales_quote_address_discount_item>
+                        <observers>
+                                <rewardpoints>
+                                    <type>singleton</type>
+                                    <class>Rewardpoints_Model_Observer</class>
+                                    <method>applyDiscount</method>
+                                </rewardpoints>
+                        </observers>
+                </sales_quote_address_discount_item>
+                
+                <adminhtml_customer_prepare_save>
+                    <observers>
+                        <recordAdminPoints>
+                            <type>singleton</type>
+                            <class>rewardpoints/observer</class>
+                            <method>recordPointsAdminEvent</method>
+                        </recordAdminPoints>
+                    </observers>
+                </adminhtml_customer_prepare_save>
+
+
+        </events>
+
+        <!-- Mage_Adminhtml_Block_Customer_Edit_Tabs -->
+        <blocks>
+            <adminhtml>
+                <rewrite>
+                    <customer_edit_tabs>Rewardpoints_Block_Adminhtml_Customer_Edit_Tabs</customer_edit_tabs>
+                </rewrite>
+            </adminhtml>
+        </blocks>
+        
+        <rewrite>
+            <rewardpoints_directory_switch>
+                <from><![CDATA[#^/directory/currency/switch/#]]></from>                
+                <to>/rewardpoints/currency/switch/</to>
+            </rewardpoints_directory_switch>
+        </rewrite>
+
+
+
+
+    </global>
 	
 	<frontend>
             <events>
@@ -148,6 +220,7 @@
                             </recordOrderPoints>
                         </observers>
                     </checkout_onepage_controller_success_action>-->
+                    
 
                     <checkout_type_onepage_save_order_after>
                         <observers>
@@ -221,6 +294,7 @@
                 </args>
             </rewardpoints>
         </routers>
+
     </admin>
 
     <frontend>
@@ -247,62 +321,44 @@
             </updates>
         </layout>
 
+
         <menu>
                 <rewardpoints translate="title" module="rewardpoints">
                         <title>Reward Points</title>
-                        <sort_order>50</sort_order>
+                        <sort_order>60</sort_order>
                         <children>
                                 <stats translate="title" module="rewardpoints">
                                         <title>Statistics</title>
-                                        <sort_order>2</sort_order>
+                                        <sort_order>10</sort_order>
                                         <action>rewardpoints/adminhtml_stats</action>
                                 </stats>
                                 <clientpoints translate="title" module="rewardpoints">
                                         <title>Client points</title>
-                                        <sort_order>3</sort_order>
+                                        <sort_order>20</sort_order>
                                         <action>rewardpoints/adminhtml_clientpoints</action>
                                 </clientpoints>
-                                <!--<import_export translate="title" module="rewardpoints">
-                                        <title>Import/export</title>
-                                        <sort_order>4</sort_order>
-                                        <children>
-                                            <import translate="title" module="rewardpoints">
-                                                <title>Import</title>
-                                                <sort_order>1</sort_order>
-                                                <action>rewardpoints/adminhtml_import</action>
-                                            </import>
-                                            <export translate="title" module="rewardpoints">
-                                                <title>Export</title>
-                                                <sort_order>2</sort_order>
-                                                <action>rewardpoints/adminhtml_export</action>
-                                            </export>
-                                        </children>
-                                </import_export>-->
+                                
+
                                 <referrals translate="title" module="rewardpoints">
                                         <title>Referrals</title>
-                                        <sort_order>5</sort_order>
+                                        <sort_order>30</sort_order>
                                         <action>rewardpoints/adminhtml_referrals</action>
                                 </referrals>
-                                <!--<rules translate="title" module="rewardpoints">
-                                        <title>Rules (beta)</title>
-                                        <sort_order>6</sort_order>
-                                        <action>rewardpoints/adminhtml_rules</action>
-                                </rules>-->
                                 <catalogpointrules translate="title" module="rewardpoints">
                                     <title>Catalog point rules</title>
-                                    <sort_order>6</sort_order>
+                                    <sort_order>40</sort_order>
                                     <action>rewardpoints/adminhtml_catalogpointrules</action>
                                 </catalogpointrules>
 
                                 <pointrules translate="title" module="rewardpoints">
                                     <title>Cart point rules</title>
-                                    <sort_order>7</sort_order>
+                                    <sort_order>50</sort_order>
                                     <action>rewardpoints/adminhtml_pointrules</action>
                                 </pointrules>
                                 
                                 <config translate="title" module="rewardpoints">
                                         <title>Configuration</title>
-                                        <sort_order>8</sort_order>
+                                        <sort_order>60</sort_order>
                                         <action>adminhtml/system_config/edit/section/rewardpoints</action>
                                 </config>
                         </children>
@@ -319,37 +375,32 @@
                     <children>
                         <rewardpoints module="rewardpoints">
                             <title>Reward Points</title>
-                            <sort_order>50</sort_order>
+                            <sort_order>60</sort_order>
                             <children>
                                 <stats translate="title" module="rewardpoints">
                                     <title>Statistics</title>
-                                    <sort_order>2</sort_order>
+                                    <sort_order>10</sort_order>
                                 </stats>
                                 <clientpoints translate="title" module="rewardpoints">
                                     <title>Client points</title>
-                                    <sort_order>3</sort_order>
+                                    <sort_order>20</sort_order>
                                 </clientpoints>
                                 <referrals translate="title" module="rewardpoints">
                                     <title>Referrals</title>
-                                    <sort_order>4</sort_order>
+                                    <sort_order>30</sort_order>
                                 </referrals>
-                                <!--<rules translate="title" module="rewardpoints">
-                                    <title>Rules</title>
-                                    <sort_order>5</sort_order>
-                                </rules>-->
-
                                 <catalogpointrules translate="title" module="rewardpoints">
                                     <title>Catalog point rules</title>
-                                    <sort_order>5</sort_order>
+                                    <sort_order>40</sort_order>
                                 </catalogpointrules>
 
                                 <pointrules translate="title" module="rewardpoints">
                                     <title>Cart point rules</title>
-                                    <sort_order>6</sort_order>
+                                    <sort_order>50</sort_order>
                                 </pointrules>
                                 <config translate="title" module="rewardpoints">
                                     <title>Configuration</title>
-                                    <sort_order>7</sort_order>
+                                    <sort_order>60</sort_order>
                                 </config>
                             </children>
                         </rewardpoints>
@@ -417,10 +468,22 @@
         </translate>
 
     </adminhtml>
+    
+    <crontab>
+        <jobs>
+            <aggregate_rewardpoints_data>
+                <schedule><cron_expr>0 0 * * *</cron_expr></schedule>
+                <run><model>rewardpoints/observer::aggregateRewardpointsData</model></run>
+            </aggregate_rewardpoints_data>
+        </jobs>
+    </crontab>
 
     <default>
         <rewardpoints>
             <default>
+                <process_restriction>0</process_restriction>
+                
+                <points_delay>0</points_delay>
                 <points_duration>0</points_duration>
                 <money_points>1</money_points>
                 <auto_use>0</auto_use>
@@ -435,6 +498,14 @@
 		<math_method>0</math_method>
                 
                 <store_scope>0</store_scope>
+                <process_rate>0</process_rate>
+                <step_slide>0</step_slide>
+                <min_use>0</min_use>
+                <status_used>state</status_used>
+                <valid_statuses>complete,processing</valid_statuses>
+
+                <process_tax>0</process_tax>
+                <exclude_tax>0</exclude_tax>
             </default>
             <registration>
                 <referral_show>1</referral_show>
@@ -448,7 +519,23 @@
                 <registration_points>0</registration_points>
                 <referral_permanent>0</referral_permanent>
                 <referral_addthis>0</referral_addthis>
+                <process_shipping>0</process_shipping>
             </registration>
+            <dataflow_profile>
+                <field_email>0</field_email>
+                <field_points>1</field_points>
+                <field_order>-1</field_order>
+                <field_store>-1</field_store>
+            </dataflow_profile>
+            <notifications>
+                <notification_email_identity>support</notification_email_identity>
+                <notification_email_template>rewardpoints_notification_notification_email_template</notification_email_template>
+                <notification_days>5</notification_days>
+            </notifications>
+            <design>
+                <small_inline_image_show>0</small_inline_image_show>
+                <big_inline_image_show>0</big_inline_image_show>
+            </design>
         </rewardpoints>
     </default>
 	

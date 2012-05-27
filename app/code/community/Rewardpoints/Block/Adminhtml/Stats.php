@@ -18,18 +18,43 @@
  */
 class Rewardpoints_Block_Adminhtml_Stats extends Mage_Adminhtml_Block_Widget_Grid_Container
 {
-  public function __construct()
-  {
-    $this->_controller = 'adminhtml_stats';
-    $this->_blockGroup = 'rewardpoints';
-    $this->_headerText = Mage::helper('rewardpoints')->__('Statistics');
-    parent::__construct();
-    $this->_addButtonLabel = Mage::helper('rewardpoints')->__('Add Points');
-    $this->_addButton ('check_all_points', array('label'=> Mage::helper('rewardpoints')->__('Refresh customer points'), 'class' => 'save', 'onclick'   => 'setLocation(\''.$this->getCheckPointsUrl().'\')'));
-  }
+    protected $_customer;
 
-  public function getCheckPointsUrl()
-  {
-     return $this->getUrl('*/*/checkpoints');
-  }
+
+    public function __construct()
+    {
+        /*$this->_controller = 'adminhtml_stats';
+        $this->_blockGroup = 'rewardpoints';
+        $this->_headerText = Mage::helper('rewardpoints')->__('Statistics');
+        parent::__construct();
+        */
+
+        $this->_controller = 'adminhtml_stats';
+        $this->_blockGroup = 'rewardpoints';
+        $this->_headerText = Mage::helper('rewardpoints')->__('Statistics');
+        parent::__construct();
+        $this->_addButtonLabel = Mage::helper('rewardpoints')->__('Add Points');
+        $this->_addButton ('check_all_points', array('label'=> Mage::helper('rewardpoints')->__('Refresh customer points'), 'class' => 'save', 'onclick'   => 'setLocation(\''.$this->getCheckPointsUrl().'\')'));
+
+
+    }
+
+    public function getCustomer()
+    {
+        if (!$this->_customer) {
+            $this->_customer = Mage::registry('current_customer');
+        }
+        return $this->_customer;
+    }
+
+    public function getStoreId()
+    {
+        return $this->getCustomer()->getStoreId();
+    }
+
+    public function getCheckPointsUrl()
+    {
+        return $this->getUrl('*/*/checkpoints');
+    }
+
 }

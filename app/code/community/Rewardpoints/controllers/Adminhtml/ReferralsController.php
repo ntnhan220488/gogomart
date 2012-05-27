@@ -23,7 +23,6 @@ class Rewardpoints_Adminhtml_ReferralsController extends Mage_Adminhtml_Controll
             $this->loadLayout()
                     ->_setActiveMenu('rewardpoints/referrals')
                     ->_addBreadcrumb(Mage::helper('rewardpoints')->__('Referrals'), Mage::helper('rewardpoints')->__('Referrals'));
-
             return $this;
 	}
 

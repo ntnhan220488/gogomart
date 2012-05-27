@@ -23,8 +23,8 @@ class Rewardpoints_Model_Stats extends Mage_Core_Model_Abstract
     const APPLY_ALL_ORDERS  = '-1';
 
     const TYPE_POINTS_ADMIN  = '-1';
-    const TYPE_POINTS_REGISTRATION  = '-2';
     const TYPE_POINTS_REVIEW  = '-2';
+    const TYPE_POINTS_REGISTRATION  = '-3';
 
     protected $_targets;
 
@@ -33,6 +33,9 @@ class Rewardpoints_Model_Stats extends Mage_Core_Model_Abstract
 
     protected $points_received;
     protected $points_spent;
+    
+    const XML_PATH_NOTIFICATION_EMAIL_TEMPLATE       = 'rewardpoints/notifications/notification_email_template';
+    const XML_PATH_NOTIFICATION_EMAIL_IDENTITY       = 'rewardpoints/notifications/notification_email_identity';
 
     public function _construct()
     {
@@ -111,21 +114,54 @@ class Rewardpoints_Model_Stats extends Mage_Core_Model_Abstract
         $row = $collection->getFirstItem();
         return $row->getNbCredit() - $this->getPointsReceived($customer_id, $store_id);
     }
+    
+    
+    public function sendNotification(Mage_Customer_Model_Customer $customer, $store_id, $points, $days)
+    {
+        $translate = Mage::getSingleton('core/translate');
+        /* @var $translate Mage_Core_Model_Translate */
+        $translate->setTranslateInline(false);
+
+        $email = Mage::getModel('core/email_template');
+
+        $template = Mage::getStoreConfig(self::XML_PATH_NOTIFICATION_EMAIL_TEMPLATE, $store_id);
+        $recipient = array(
+            'email' => $customer->getEmail(),
+            'name'  => $customer->getName()
+        );
+
+        $sender  = Mage::getStoreConfig(self::XML_PATH_NOTIFICATION_EMAIL_IDENTITY, $store_id);
+        $email->setDesignConfig(array('area'=>'frontend', 'store'=>$store_id))
+                ->sendTransactional(
+                    $template,
+                    $sender,
+                    $recipient['email'],
+                    $recipient['name'],
+                    array(
+                        'points'   => $points,
+                        'days'   => $days,
+                        'customer' => $customer
+                    )
+                );
+        $translate->setTranslateInline(true);
+        return $email->getSentSuccess();
+    }
 
 
     public function getPointsReceived($customer_id, $store_id){
         if ($this->points_received){
             return $this->points_received;
         }
-        
-        $order_states = array("'processing'","'complete'");
+        $statuses = Mage::getStoreConfig('rewardpoints/default/valid_statuses', Mage::app()->getStore()->getId());
+        $order_states = explode(",", $statuses);
+
+        //$order_states = array("'processing'","'complete'");
         $collection = $this->getCollection();
         $collection->joinValidPointsOrder($customer_id, $store_id, $order_states);
         
         /*$collection->printlogquery(true);
         die;*/
         $row = $collection->getFirstItem();
-
         $this->points_received = $row->getNbCredit();
 
         return $row->getNbCredit();
@@ -136,7 +172,13 @@ class Rewardpoints_Model_Stats extends Mage_Core_Model_Abstract
         if ($this->points_spent){
             return $this->points_spent;
         }
-        $order_states = array("'processing'","'complete'","'new'");
+
+        $statuses = Mage::getStoreConfig('rewardpoints/default/valid_statuses', Mage::app()->getStore()->getId());
+        $order_states = explode(",", $statuses);
+        $order_states[] = 'new';
+
+
+        //$order_states = array("'processing'","'complete'","'new'");
 
         $collection = $this->getCollection();
         $collection->joinValidPointsOrder($customer_id, $store_id, $order_states, true);
@@ -149,7 +191,6 @@ class Rewardpoints_Model_Stats extends Mage_Core_Model_Abstract
     }
 
     public function getPointsCurrent($customer_id, $store_id){
-        //$total = $this->getPointsReceived($customer_id, $store_id) - $this->getPointsSpent($customer_id, $store_id);
         $total = $this->getPointsReceived($customer_id, $store_id) - $this->getPointsSpent($customer_id, $store_id);
         if ($total > 0){
                 return $total;
@@ -158,7 +199,36 @@ class Rewardpoints_Model_Stats extends Mage_Core_Model_Abstract
         }
     }
 
+    public function recordPoints($pointsInt, $customerId, $orderId, $store_id, $force_nodelay = false) {
+        $post = array(
+            'order_id' => $orderId,
+            'customer_id' => $customerId,
+            'store_id' => $store_id,
+            'points_current' => $pointsInt,
+            'convertion_rate' => Mage::getStoreConfig('rewardpoints/default/points_money', $store_id)
+            );
+        //v.2.0.0
+        $add_delay = 0;
+        if ($delay = Mage::getStoreConfig('rewardpoints/default/points_delay', $store_id) && $force_nodelay){
+            if (is_numeric($delay)){
+                $post['date_start'] = $this->getResource()->formatDate(mktime(0, 0, 0, date("m"), date("d")+$delay, date("Y")));
+                $add_delay = $delay;
+            }
+        }
 
+        if ($duration = Mage::getStoreConfig('rewardpoints/default/points_duration', $store_id)){
+            if (is_numeric($duration)){
+                if (!isset($post['date_start'])){
+                    $post['date_start'] = $this->getResource()->formatDate(time());
+                }
+                $post['date_end'] = $this->getResource()->formatDate(mktime(0, 0, 0, date("m"), date("d")+$duration+$add_delay, date("Y")));
+            }
+        }
+        $this->setData($post);
+        $this->save();
+    }
+
+    
 
 }
 

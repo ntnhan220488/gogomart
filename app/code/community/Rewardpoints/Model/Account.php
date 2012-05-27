@@ -146,7 +146,12 @@ class Rewardpoints_Model_Account extends Mage_Core_Model_Abstract {
             
 
             public function getPointsReceived(){
-                    $order_states = array("processing","complete");
+
+                    $statuses = Mage::getStoreConfig('rewardpoints/default/valid_statuses', Mage::app()->getStore()->getId());
+                    $status_field = Mage::getStoreConfig('rewardpoints/default/status_used', Mage::app()->getStore()->getId());
+                    
+                    $order_states = explode(",", $statuses);
+                    //$order_states = array("processing","complete");
                     
                     $connection = Mage::getSingleton('core/resource')
                                                             ->getConnection('rewardpoints_read');
@@ -157,8 +162,8 @@ class Rewardpoints_Model_Account extends Mage_Core_Model_Abstract {
                         $select->where(" (".Mage::getSingleton('core/resource')->getTableName('rewardpoints_account').".order_id = '".Rewardpoints_Model_Stats::TYPE_POINTS_REVIEW."' or '".Rewardpoints_Model_Stats::TYPE_POINTS_ADMIN."' or ".Mage::getSingleton('core/resource')->getTableName('rewardpoints_account').".order_id = '".Rewardpoints_Model_Stats::TYPE_POINTS_REGISTRATION."'
                                     or ".Mage::getSingleton('core/resource')->getTableName('rewardpoints_account').".order_id in (SELECT increment_id
                                        FROM ".Mage::getSingleton('core/resource')->getTableName('sales_order')." AS orders
-                                       WHERE orders.state IN ('processing','complete'))
-                                         ) ");
+                                       WHERE orders.".$status_field." IN (?))
+                                         ) ", $order_states);
                     } else {
                         $select->where(" (".Mage::getSingleton('core/resource')->getTableName('rewardpoints_account').".order_id = '".Rewardpoints_Model_Stats::TYPE_POINTS_REVIEW."' or '".Rewardpoints_Model_Stats::TYPE_POINTS_ADMIN."' or ".Mage::getSingleton('core/resource')->getTableName('rewardpoints_account').".order_id = '".Rewardpoints_Model_Stats::TYPE_POINTS_REGISTRATION."'
                                     or ".Mage::getSingleton('core/resource')->getTableName('rewardpoints_account').".order_id in (SELECT increment_id
@@ -167,8 +172,8 @@ class Rewardpoints_Model_Account extends Mage_Core_Model_Abstract {
                                            SELECT order_state.entity_id
                                            FROM ".Mage::getSingleton('core/resource')->getTableName('sales_order_varchar')." AS order_state
                                            WHERE order_state.value <> 'canceled'
-                                           AND order_state.value in ('processing','complete'))
-                                        ) ) ");
+                                           AND order_state.value in (?))
+                                        ) ) ", $order_states);
                     }
                                                             
 
@@ -214,13 +219,18 @@ class Rewardpoints_Model_Account extends Mage_Core_Model_Abstract {
             }
 
             public function getPointsSpent(){
+                    $statuses = Mage::getStoreConfig('rewardpoints/default/valid_statuses', Mage::app()->getStore()->getId());
+                    $status_field = Mage::getStoreConfig('rewardpoints/default/status_used', Mage::app()->getStore()->getId());
 
-                    $order_states = array("processing","complete","new");
+                    $order_states = explode(",", $statuses);
+                    $order_states[] = 'new';
+
+                    //$order_states = array("processing","complete","new");
                     $orders = Mage::getModel('sales/order')->getCollection()
-                    ->addAttributeToSelect('*')
-                    ->addAttributeToFilter('customer_id', $this->customerId)
-                    ->addAttributeToFilter('state', array('in' => $order_states))
-                    ->joinAttribute('status', 'order/status', 'entity_id', null, 'left');
+                        ->addAttributeToSelect('*')
+                        ->addAttributeToFilter('customer_id', $this->customerId)
+                        ->addAttributeToFilter($status_field, array('in' => $order_states))
+                        ->joinAttribute('status', 'order/status', 'entity_id', null, 'left');
 
                     $orders_array =array();
 

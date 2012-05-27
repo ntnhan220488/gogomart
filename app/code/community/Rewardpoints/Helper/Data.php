@@ -21,8 +21,59 @@ class Rewardpoints_Helper_Data extends Mage_Core_Helper_Abstract {
     {
         return $this->_getUrl('rewardpoints/');
     }
+    
+    
+    public function getResizedUrl($imgName,$x,$y=NULL){
+        $imgPathFull=Mage::getBaseDir("media").DS.$imgName;
+ 
+        $widht=$x;
+        $y?$height=$y:$height=$x;
+        $resizeFolder="j2t_resized";
+        $imageResizedPath=Mage::getBaseDir("media").DS.$resizeFolder.DS.$imgName;
+        
+        if (!file_exists($imageResizedPath) && file_exists($imgPathFull)){
+            $imageObj = new Varien_Image($imgPathFull);
+            $imageObj->constrainOnly(true);
+            $imageObj->keepAspectRatio(true);
+            $imageObj->keepTransparency(true);
+            $imageObj->resize($widht,$height);
+            $imageObj->save($imageResizedPath);
+        }
+        
+        return Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).$resizeFolder.DS.$imgName;
+    }
+    
+    
+    
+    public function getProductPointsText($product, $noCeil = false, $from_list = false){
+        $points = $this->getProductPoints($product, $noCeil, $from_list);        
+        if ($points){
+            
+            $img = '';
+            
+            if (Mage::getStoreConfig('rewardpoints/design/small_inline_image_show', Mage::app()->getStore()->getId())){
+                //$img = '<img src="'.Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).DS. 'j2t_image_small.png' .'" alt="" width="16" height="16" /> ';
+                $img = '<img src="'.$this->getResizedUrl('j2t_image_small.png', 16, 16) .'" alt="" width="16" height="16" /> ';
+            }
+            
+            $return = '<p class="j2t-loyalty-points inline-points">'.$img. Mage::helper('rewardpoints')->__("With this product, you earn <span id='j2t-pts'>%d</span> loyalty point(s).", $points) . '</p>';
+            return $return;
+        }
+        return '';
+    }
+    
 
-    public function processMathValue($amount){
+    public function processMathValue($amount, $specific_rate = null){
+        $math_method = Mage::getStoreConfig('rewardpoints/default/math_method', Mage::app()->getStore()->getId());
+        if ($math_method == 1){
+            $amount = round($amount);
+        } elseif ($math_method == 0) {
+            $amount = floor($amount);
+        }
+        return $this->ratePointCorrection($amount, $specific_rate);
+    }
+
+    public function processMathValueCart($amount, $specific_rate = null){
         $math_method = Mage::getStoreConfig('rewardpoints/default/math_method', Mage::app()->getStore()->getId());
         if ($math_method == 1){
             $amount = round($amount);
@@ -30,16 +81,72 @@ class Rewardpoints_Helper_Data extends Mage_Core_Helper_Abstract {
             $amount = floor($amount);
         }
         return $amount;
+        //return $this->ratePointCorrection($amount, $specific_rate);
     }
 
-    public function getProductPoints($product){
+    public function ratePointCorrection($points, $rate = null){
+        if ($rate == null){
+            $baseCurrency = Mage::app()->getBaseCurrencyCode();
+            $currentCurrency = Mage::app()->getStore()->getCurrentCurrencyCode();
+            $rate = Mage::getModel('directory/currency')->load($baseCurrency)->getRate($currentCurrency);
+        }
+        if (Mage::getStoreConfig('rewardpoints/default/process_rate', Mage::app()->getStore()->getId())){
+            /*if ($rate > 1){
+                return $points * $rate;
+            } else {*/
+                return $points / $rate;
+            //}
+        } else {
+            return $points;
+        }
+    }
 
+    public function rateMoneyCorrection($money, $rate = null){
+        if ($rate == null){
+            $baseCurrency = Mage::app()->getBaseCurrencyCode();
+            $currentCurrency = Mage::app()->getStore()->getCurrentCurrencyCode();
+            $rate = Mage::getModel('directory/currency')->load($baseCurrency)->getRate($currentCurrency);
+        }
+        if (Mage::getStoreConfig('rewardpoints/default/process_rate', Mage::app()->getStore()->getId())){
+            /*if ($rate > 1){
+                return $money / $rate;
+            } else {*/
+                return $money * $rate;
+            //}
+        } else {
+            return $money;
+        }
+        
+    }
+
+
+    public function isCustomProductPoints($product){
+        $catalog_points = Mage::getModel('rewardpoints/catalogpointrules')->getAllCatalogRulePointsGathered($product);
+        if ($catalog_points === false){
+            return true;
+        }
+        $attribute_restriction = Mage::getStoreConfig('rewardpoints/default/process_restriction', Mage::app()->getStore()->getId());
+        $product_points = $product->getData('reward_points');
+        if ($product_points > 0){
+            return true;
+        }
+        return false;
+    }
+    
+
+    public function getProductPoints($product, $noCeil = false, $from_list = false){
+        if ($from_list){
+            $product = Mage::getModel('catalog/product')->load($product->getId());            
+        }
+        
         $catalog_points = Mage::getModel('rewardpoints/catalogpointrules')->getAllCatalogRulePointsGathered($product);
         if ($catalog_points === false){
             return 0;
         }
 
-        $product_points = $product->getData('reward_points');
+        $attribute_restriction = Mage::getStoreConfig('rewardpoints/default/process_restriction', Mage::app()->getStore()->getId());
+        $product_points = $product->getRewardPoints();
+        
         if ($product_points > 0){
             $points_tobeused = $product_points + (int)$catalog_points;
             if (Mage::getStoreConfig('rewardpoints/default/max_point_collect_order', Mage::app()->getStore()->getId())){
@@ -48,10 +155,11 @@ class Rewardpoints_Helper_Data extends Mage_Core_Helper_Abstract {
                 }
             }
             return ($points_tobeused);
-        } else {
+        } else if (!$attribute_restriction) {
             //get product price include vat
             $_finalPriceInclTax  = Mage::helper('tax')->getPrice($product, $product->getFinalPrice(), true);
             $_weeeTaxAmount = Mage::helper('weee')->getAmount($product);
+
             $price = Mage::helper('core')->currency($_finalPriceInclTax+$_weeeTaxAmount,false,false);
             $money_to_points = Mage::getStoreConfig('rewardpoints/default/money_points', Mage::app()->getStore()->getId());
             if ($money_to_points > 0){
@@ -65,17 +173,31 @@ class Rewardpoints_Helper_Data extends Mage_Core_Helper_Abstract {
                     return Mage::getStoreConfig('rewardpoints/default/max_point_collect_order', Mage::app()->getStore()->getId());
                 }
             }
-            
-            return ($points_tobeused);
+
+            if ($noCeil)
+                return $points_tobeused;
+            else {
+                return ceil($points_tobeused);
+            }
 
         }
+        return 0;
     }
 
     public function convertMoneyToPoints($money){
         $points_to_get_money = Mage::getStoreConfig('rewardpoints/default/points_money', Mage::app()->getStore()->getId());
         $money_amount = $this->processMathValue($money*$points_to_get_money);
 
-        return $money_amount;
+        return $this->rateMoneyCorrection($money_amount);
+        //return $money_amount;
+    }
+
+
+    public function convertProductMoneyToPoints($money){
+        $points_to_get_money = Mage::getStoreConfig('rewardpoints/default/money_points', Mage::app()->getStore()->getId());
+        $money_amount = $this->processMathValue($money*$points_to_get_money);
+        return $this->rateMoneyCorrection($money_amount);
+        //return $money_amount;
     }
 
     public function convertPointsToMoney($points_to_be_used){
@@ -84,7 +206,6 @@ class Rewardpoints_Helper_Data extends Mage_Core_Helper_Abstract {
         
         $reward_model = Mage::getModel('rewardpoints/stats');
         $current = $reward_model->getPointsCurrent($customerId, Mage::app()->getStore()->getId());
-
 
         if ($current < $points_to_be_used) {
             Mage::getSingleton('checkout/session')->addError(Mage::helper('rewardpoints')->__('Not enough points available.'));
@@ -109,26 +230,33 @@ class Rewardpoints_Helper_Data extends Mage_Core_Helper_Abstract {
         }
 
         $points_to_get_money = Mage::getStoreConfig('rewardpoints/default/points_money', Mage::app()->getStore()->getId());
+        $discount_amount = $this->processMathValueCart($points_to_be_used/$points_to_get_money);
 
-        $discount_amount = $this->processMathValue($points_to_be_used/$points_to_get_money);
-
+        //return $this->ratePointCorrection($discount_amount);
         return $discount_amount;
     }
 
-    public function getPointsOnOrder($cartLoaded = null, $cartQuote = null){
+    public function getPointsOnOrder($cartLoaded = null, $cartQuote = null, $specific_rate = null, $exclude_rules = false, $storeId = false){
         $rewardPoints = 0;
+        $rewardPointsAtt = 0;
 
-        //get points cart rule
-        if ($cartLoaded != null){
-            $points_rules = Mage::getModel('rewardpoints/pointrules')->getAllRulePointsGathered($cartLoaded);
-        } else {
-            $points_rules = Mage::getModel('rewardpoints/pointrules')->getAllRulePointsGathered();
+        if (!$storeId){
+            $storeId = Mage::app()->getStore()->getId();
         }
         
-        if ($points_rules === false){
-            return 0;
+        //get points cart rule
+        if (!$exclude_rules){
+            if ($cartLoaded != null){
+                $points_rules = Mage::getModel('rewardpoints/pointrules')->getAllRulePointsGathered($cartLoaded);
+            } else {
+                $points_rules = Mage::getModel('rewardpoints/pointrules')->getAllRulePointsGathered();
+            }
+            if ($points_rules === false){
+                return 0;
+            }
+            $rewardPoints += (int)$points_rules;
         }
-        $rewardPoints += (int)$points_rules;
+        
         
         if ($cartLoaded == null){
             $cartHelper = Mage::helper('checkout/cart');
@@ -139,16 +267,16 @@ class Rewardpoints_Helper_Data extends Mage_Core_Helper_Abstract {
             $items = $cartLoaded->getAllItems();
         }
 
-        
+        $attribute_restriction = Mage::getStoreConfig('rewardpoints/default/process_restriction', $storeId);
+
         $cart_amount = 0;
         foreach ($items as $_item){
             $_product = Mage::getModel('catalog/product')->load($_item->getProductId());
             $catalog_points = Mage::getModel('rewardpoints/catalogpointrules')->getAllCatalogRulePointsGathered($_product);
             if ($catalog_points === false){
                 continue;
-            } else {
+            } else if(!$attribute_restriction) {
                 //$rewardPoints += (int)$catalog_points * $_item->getQty();
-
                 if ($cartLoaded == null || $cartQuote != null){
                     $rewardPoints += (int)$catalog_points * $_item->getQty();
                 } else {
@@ -160,25 +288,44 @@ class Rewardpoints_Helper_Data extends Mage_Core_Helper_Abstract {
             if ($product_points > 0){
                 if ($_item->getQty() > 0 || $_item->getQtyOrdered() > 0){
                     if ($cartLoaded == null || $cartQuote != null){
-                        $rewardPoints += (int)$product_points * $_item->getQty();
+                        $rewardPointsAtt += (int)$product_points * $_item->getQty();
                     } else {
-                        $rewardPoints += (int)$product_points * $_item->getQtyOrdered();
+                        $rewardPointsAtt += (int)$product_points * $_item->getQtyOrdered();
                     }
                 }
-            } else {
-                $price = $_item->getRowTotal() + $_item->getTaxAmount() - $_item->getDiscountAmount();    
-                $rewardPoints += (int)Mage::getStoreConfig('rewardpoints/default/money_points', Mage::app()->getStore()->getId()) * $price;
-            }
-            $cart_amount += $_item->getRowTotal() + $_item->getTaxAmount() - $_item->getDiscountAmount();
-        }
-        $rewardPoints = $this->processMathValue($rewardPoints);
+            } else if(!$attribute_restriction) {
+                //check if product is option product (bundle product)
 
-        if (Mage::getStoreConfig('rewardpoints/default/max_point_collect_order', Mage::app()->getStore()->getId())){
-            if ((int)Mage::getStoreConfig('rewardpoints/default/max_point_collect_order', Mage::app()->getStore()->getId()) < $rewardPoints){
-                return Mage::getStoreConfig('rewardpoints/default/max_point_collect_order', Mage::app()->getStore()->getId());
+                if (!$_item->getParentItemId()) {
+
+                    //v.2.0.0 exclude_tax
+                    if (Mage::getStoreConfig('rewardpoints/default/exclude_tax', $storeId)){
+                        $tax_amount = 0;
+                    } else {
+                        $tax_amount = $_item->getTaxAmount();
+                    }
+
+                    $price = $_item->getRowTotal() + $tax_amount - $_item->getDiscountAmount();
+                    $rewardPoints += (int)Mage::getStoreConfig('rewardpoints/default/money_points', $storeId) * $price;
+                }
+            }
+
+            //v.2.0.0 exclude_tax
+            if (Mage::getStoreConfig('rewardpoints/default/exclude_tax', $storeId)){
+                $tax_amount = 0;
+            } else {
+                $tax_amount = $_item->getTaxAmount();
+            }
+            $cart_amount += $_item->getRowTotal() + $tax_amount - $_item->getDiscountAmount();
+        }
+        $rewardPoints = $this->processMathValue($rewardPoints, $specific_rate) + $rewardPointsAtt;
+
+        if (Mage::getStoreConfig('rewardpoints/default/max_point_collect_order', $storeId)){
+            if ((int)Mage::getStoreConfig('rewardpoints/default/max_point_collect_order', $storeId) < $rewardPoints){
+                return ceil(Mage::getStoreConfig('rewardpoints/default/max_point_collect_order', $storeId));
             }
         }
-        
-        return $rewardPoints;
+
+        return ceil($rewardPoints);
     }
 }

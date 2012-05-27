@@ -21,9 +21,9 @@ class Rewardpoints_Model_Rule_Condition_Customeraddress_Params extends Mage_Rule
     {
         $hlp = Mage::helper('rewardpoints');
 	$attributes = array(
-            'postcode' => Mage::helper('j2tcustomerpromotion')->__('Code postal utilisateur'),
-            'region_id' => Mage::helper('j2tcustomerpromotion')->__('Région utilisateur'),
-            'country_id' => Mage::helper('j2tcustomerpromotion')->__('Pays utilisateur'),
+            'postcode' => Mage::helper('rewardpoints')->__('Zip/Postal Code'),
+            'region_id' => Mage::helper('rewardpoints')->__('Region'),
+            'country_id' => Mage::helper('rewardpoints')->__('Country'),
         );
 
         $this->setAttributeOption($attributes);        

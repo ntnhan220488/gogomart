@@ -22,7 +22,7 @@ class Rewardpoints_Block_Points extends Mage_Core_Block_Template
     {
         parent::__construct();
         $this->setTemplate('referafriend/points.phtml');
-        $points = Mage::getResourceModel('rewardpoints/stats_collection')
+        $points = Mage::getModel('rewardpoints/stats')->getCollection()
             ->addClientFilter(Mage::getSingleton('customer/session')->getCustomer()->getId());
         $this->setPoints($points);
     }
@@ -46,12 +46,14 @@ class Rewardpoints_Block_Points extends Mage_Core_Block_Template
 
     public function getTypeOfPoint($order_id, $referral_id)
     {
+        $status_field = Mage::getStoreConfig('rewardpoints/default/status_used', Mage::app()->getStore()->getId());
+
         $toHtml = '';
         if($referral_id){
-            $referrer = Mage::getModel('customer/customer')->load($referral_id);
-            $toHtml .= '<div class="j2t-in-title">'.$this->__('Referral points (%s)',$referrer->getEmail()).'</div>';
+            $referrer = Mage::getModel('rewardpoints/referral')->load($referral_id);
+            $toHtml .= '<div class="j2t-in-title">'.$this->__('Referral points (%s)',$referrer->getRewardpointsReferralEmail()).'</div>';
             $order = Mage::getModel('sales/order')->loadByIncrementId($order_id);
-            $toHtml .=  '<div class="j2t-in-txt">'.$this->__('Referral order state: %s',$this->__($order->getState())).'</div>';
+            $toHtml .=  '<div class="j2t-in-txt">'.$this->__('Referral order state: %s',$this->__($order->getData($status_field))).'</div>';
         } elseif ($order_id == Rewardpoints_Model_Stats::TYPE_POINTS_REVIEW){
             $toHtml .= '<div class="j2t-in-title">'.$this->__('Review points').'</div>';
         } elseif ($order_id < 0){
@@ -59,7 +61,7 @@ class Rewardpoints_Block_Points extends Mage_Core_Block_Template
         } else {
             $toHtml .= '<div class="j2t-in-title">'.$this->__('Order: %s', $order_id).'</div>';
             $order = Mage::getModel('sales/order')->loadByIncrementId($order_id);
-            $toHtml .= '<div class="j2t-in-txt">'.$this->__('Order state: %s',$this->__($order->getState())).'</div>';
+            $toHtml .= '<div class="j2t-in-txt">'.$this->__('Order state: %s',$this->__($order->getData($status_field))).'</div>';
         }
 
         return $toHtml;

@@ -393,8 +393,8 @@ p.required { font-size:11px; text-align:right; color:#EB340A; }
 .data-table tbody th,
 .data-table tbody td { border-bottom:1px solid #d9dde3; border-right:1px solid #d9dde3; }
 /* Bundle products tables */
-.data-table tbody.odd tr { background:#f8f7f5 !important; }
-.data-table tbody.even tr { background:#f6f6f6 !important; }
+.data-table tbody.odd tr { 1background-color: #450c26 !important; }
+.data-table tbody.even tr { 1background-color:#2F081A !important; }
 .data-table tbody.odd tr td,
 .data-table tbody.even tr td { border-bottom:0; }
 .data-table tbody.odd tr.border td,
@@ -404,7 +404,7 @@ p.required { font-size:11px; text-align:right; color:#EB340A; }
 .data-table tbody td .option-value { padding-left:10px; }
 
 /* Generic Info Box */
-.info-box { background:#fff url(../images/bkg_block-title.gif) 0 0 repeat-x; border:1px solid #d0cbc1; padding:12px 15px; margin:0 0 15px; }
+.info-box {  url(../images/bkg_block-title.gif) 0 0 repeat-x; border:1px solid #d0cbc1; padding:12px 15px; margin:0 0 15px; }
 .info-box h2 { font-weight:bold; font-size:13px; }
 
 .info-table th { font-weight:bold; padding:2px 15px 2px 0; }
@@ -1477,6 +1477,7 @@ tr.summary-details-excluded { font-style:italic; }
 .dashboard .box .box-title { background:url(../images/bkg_divider1.gif) 0 100% repeat-x; padding:0 0 2px; margin:0 0 8px; text-align:right; }
 .dashboard .box .box-title h3,
 .dashboard .box .box-title h4 { float:left; font-size:13px; font-weight:bold; margin:0; }
+.box .box-title a, .box .box-content a{color:#ff0000;}
 
 /* Block: Recent Orders */
 .dashboard .box-recent .box-head h2 { background-image:url(../images/i_folder-table.gif); }
@@ -1509,16 +1510,16 @@ tr.summary-details-excluded { font-style:italic; }
 .addresses-list h3 { font-weight:bold; font-size:13px; }
 .addresses-list address { margin:0 0 3px; }
 .addresses-list p { margin:0; }
-.addresses-list a { font-weight:bold; }
+.addresses-list a { font-weight:bold; color:#ff0000;}
 .addresses-list .link-remove { color:#646464; }
 .addresses-list .separator { margin:0 3px; }
-.addresses-list li.item { background:#fff url(../images/bkg_account_box.gif) 0 0 repeat-x; border:1px solid #ccc; padding:10px 13px; margin:0 0 10px; }
+.addresses-list li.item { url(../images/bkg_account_box.gif) 0 0 repeat-x; border:1px solid #ccc; padding:10px 13px; margin:0 0 10px; }
 .addresses-list li.empty { background:none; border:0; padding:0; }
 .addresses-list li.empty p { font-weight:bold; }
 .addresses-list .addresses-additional li.item { background:none; border:0; padding:0; }
 
 /* Order View */
-.order-info { background:#dee5e8; border:1px solid #d0cbc1; padding:4px 8px; margin:0 0 8px; }
+.order-info { color: #ff0000; border:1px solid #d0cbc1; padding:4px 8px; margin:0 0 8px; }
 .order-info dt,
 .order-info dd,
 .order-info ul,
@@ -1528,7 +1529,7 @@ tr.summary-details-excluded { font-style:italic; }
 
 .order-date { margin:10px 0; }
 
-.order-info-box { background:#fff url(../images/bkg_block-title.gif) 0 0 repeat-x; border:1px solid #d0cbc1; padding:12px 15px; margin:0 0 15px; }
+.order-info-box { url(../images/bkg_block-title.gif) 0 0 repeat-x; border:1px solid #d0cbc1; padding:12px 15px; margin:0 0 15px; }
 .order-info-box h2 { font-weight:bold; font-size:13px; }
 .order-info-box .box-payment p { margin:0 0 3px; }
 .order-info-box .box-payment th { font-weight:bold; padding-right:7px; }

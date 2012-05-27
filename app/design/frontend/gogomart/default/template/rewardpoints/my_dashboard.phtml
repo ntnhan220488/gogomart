@@ -25,13 +25,15 @@
 <?php echo $this->getChildHtml('top') ?>
 
 <div class="account-box ad-account-info box">
-	<div class="head box-title">
-		<h3><?php echo $this->__('Points') ?></h3>
-	</div>
-	<?php echo $this->getChildHtml('points') ?>
+        <div class="box-account box-recent">
+            <div class="box-head">
+                <h2><?php echo $this->__('Points') ?></h2>
+            </div>
+            <?php echo $this->getChildHtml('points') ?>
+        </div>
 </div>
 
-<div class="account-box ad-account-info box">
+<div class="account-box ad-account-info box" style="clear:both;">
     <div class="head box-title">
         <h3><?php echo $this->__('Account Information') ?></h3>
     </div>

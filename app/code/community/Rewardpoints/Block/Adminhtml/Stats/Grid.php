@@ -29,45 +29,87 @@ class Rewardpoints_Block_Adminhtml_Stats_Grid extends Mage_Adminhtml_Block_Widge
 
   protected function _prepareCollection()
   {
+      //$collection = Mage::getResourceModel('rewardpoints/customer_collection')->restrictRewardPoints()->addNameToSelect();
+      $collection = Mage::getModel('rewardpoints/stats')->getCollection()
+              ->addValidPoints(Mage::app()->getStore()->getId())
+              ->addClientEntries()
+              ->showCustomerInfo();
+              /*->joinEavTablesIntoCollection('customer_id', 'customer')*/
+              //->setCountAttribute('main_table.customer_id');//->addNameToSelect();
+              //->addNameToSelect();
       
-      $collection = Mage::getResourceModel('rewardpoints/customer_collection')->addNameToSelect();
+      /*echo $collection->getSelect()->__toString();
+      die;*/
+      
+      
       $this->setCollection($collection);
-      return parent::_prepareCollection();
+      
+      parent::_prepareCollection();
+      return $this;      
   }
 
   protected function _prepareColumns()
   {
       $this->addColumn('id', array(
-          'header'    => Mage::helper('rewardpoints')->__('ID'),
-          'align'     =>'right',
-          'width'     => '50px',
-          'index'     => 'entity_id',
-      ));
+            'header'    => Mage::helper('rewardpoints')->__('ID'),
+            'width'     => '50px',
+            'index'     => 'customer_id',          
+            'filter_index' =>'main_table.customer_id',
+            'type'  => 'number',
+        ));
 
-      $this->addColumn('name', array(
-          'header'    => Mage::helper('rewardpoints')->__('Customer full name'),
-          'align'     => 'left',
-          'index'     => 'name',
-      ));
 
+      $this->addColumn('customer_firstname', array(
+          'header'    => Mage::helper('rewardpoints')->__('Customer First Name'),
+          'align'     => 'right',
+          'index'     => 'customer_firstname',          
+          'filter_index' =>'customer_firstname_table.value',          
+      ));
+      
+      $this->addColumn('customer_lastname', array(
+          'header'    => Mage::helper('rewardpoints')->__('Customer Last Name'),
+          'align'     => 'right',
+          'index'     => 'customer_lastname',          
+          'filter_index' =>'customer_lastname_table.value',          
+      ));
+      
+      
+           
+      
       $this->addColumn('email', array(
           'header'    => Mage::helper('rewardpoints')->__('Customer email'),
           'align'     => 'left',
           'index'     => 'email',
+          'filter_index' =>'cust.email',
       ));
       
-      $this->addColumn('points_current', array(
+      
+      $this->addColumn('nb_credit', array(
           'header'    => Mage::helper('rewardpoints')->__('Accumulated points'),
           'align'     => 'right',
-          'index'     => 'all_points_accumulated',
+          'index'     => 'nb_credit',
           'filter'    => false,
+          'width'     => '50px',
       ));
-      $this->addColumn('points_spent', array(
+      $this->addColumn('nb_credit_spent', array(
           'header'    => Mage::helper('rewardpoints')->__('Spent points'),
           'align'     => 'right',
-          'index'     => 'all_points_spent',
+          'index'     => 'nb_credit_spent',
           'filter'    => false,
+          'width'     => '50px',
+          //'sortable'    => false,
       ));
+      
+      $this->addColumn('nb_credit_available', array(
+          'header'    => Mage::helper('rewardpoints')->__('Available points'),
+          'align'     => 'right',
+          'index'     => 'nb_credit_available',
+          'filter'    => false,
+          'width'     => '50px',
+          //'sortable'    => false,
+      ));
+      
+      
 
       $this->addExportType('*/*/exportCsv', Mage::helper('rewardpoints')->__('CSV'));
       $this->addExportType('*/*/exportXml', Mage::helper('rewardpoints')->__('XML'));
@@ -75,3 +117,4 @@ class Rewardpoints_Block_Adminhtml_Stats_Grid extends Mage_Adminhtml_Block_Widge
       return parent::_prepareColumns();
   }
 }
+

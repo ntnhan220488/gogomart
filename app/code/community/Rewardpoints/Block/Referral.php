@@ -19,9 +19,9 @@
 class Rewardpoints_Block_Referral extends Mage_Core_Block_Template
 {
     public function __construct()
-    {
+    {   
         parent::__construct();
-        $this->setTemplate('referafriend/referral.phtml');
+        $this->setTemplate('rewardpoints/referral.phtml');
         $referred = Mage::getResourceModel('rewardpoints/referral_collection')
             ->addClientFilter(Mage::getSingleton('customer/session')->getCustomer()->getId());
         $this->setReferred($referred);

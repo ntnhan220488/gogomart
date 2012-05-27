@@ -23,9 +23,36 @@ class Rewardpoints_Block_Coupon extends Mage_Checkout_Block_Cart_Abstract
     {
         return $this->getQuote()->getCouponCode();
     }*/
+    
+    public function getIllustrationImage(){
+        $img = '';
+        if (Mage::getStoreConfig('rewardpoints/design/big_inline_image_show', Mage::app()->getStore()->getId())){
+            $img_url = Mage::helper('rewardpoints/data')->getResizedUrl("j2t_image_big.png", 32, 32);
+            $img = '<img class="j2t-cart-points-image" style="float:left; padding-right:5px;" src="'.$img_url .'" alt="" width="32" height="32" /> ';
+        }
+        return $img;
+    }
+
+    public function isUsable() {
+        $isUsable = false;
+        $minimumBalance = $this->getMinimumBalance();
+        $currentBalance = $this->getCustomerPoints();
+        if($currentBalance >= $minimumBalance) {
+            $isUsable = true;
+        }
+        return $isUsable;
+    }
+
+    public function getMinimumBalance() {
+        $minimumBalance = Mage::getStoreConfig('rewardpoints/default/min_use', Mage::app()->getStore()->getId());
+        return $minimumBalance;
+    }
 
     public function getAutoUse(){
         return Mage::getStoreConfig('rewardpoints/default/auto_use', Mage::app()->getStore()->getId());
+    }
+    public function useSlider(){
+        return Mage::getStoreConfig('rewardpoints/default/step_slide', Mage::app()->getStore()->getId());
     }
 
     public function getPointsOnOrder() {
@@ -66,14 +93,25 @@ class Rewardpoints_Block_Coupon extends Mage_Checkout_Block_Cart_Abstract
         $full_use = Mage::getStoreConfig('rewardpoints/default/full_use', Mage::app()->getStore()->getId());
 
         $order_details = $this->getQuote()->getSubtotal();
+        
+        $min_use = Mage::getStoreConfig('rewardpoints/default/min_use', Mage::app()->getStore()->getId());
+        
+
+        /*if (Mage::getStoreConfig('rewardpoints/default/process_tax', Mage::app()->getStore()->getId()) == 1){
+            $order_details = $this->getQuote()->getSubtotalInclTax();
+        }*/
+        $order_details = Mage::getModel('rewardpoints/discount')->getCartAmount();
+        
+
         $cart_amount = Mage::helper('rewardpoints/data')->processMathValue($order_details);
         $max_use = min(Mage::helper('rewardpoints/data')->convertMoneyToPoints($cart_amount), $customerPoints);
 
-        return array('customer_points' => $customerPoints, 'points_money' => $points_money, 'step' => $step, 'step_apply' => $step_apply, 'full_use' => $full_use, 'max_use' => $max_use);
+        return array('min_use' => $min_use, 'customer_points' => $customerPoints, 'points_money' => $points_money, 'step' => $step, 'step_apply' => $step_apply, 'full_use' => $full_use, 'max_use' => $max_use);
     }
 
-    public function pointsToAddOptions($customer_points, $step){
+    public function pointsToAddOptions($customer_points, $step, $slider = false){
         $toHtml = '';
+        $toHtmlArr = array();
         $creditToBeAdded = 0;
 
         //points required to get 1 €
@@ -81,6 +119,11 @@ class Rewardpoints_Block_Coupon extends Mage_Checkout_Block_Cart_Abstract
         $max_points_tobe_used = Mage::getStoreConfig('rewardpoints/default/max_point_used_order', Mage::app()->getStore()->getId());
         
         $order_details = $this->getQuote()->getSubtotal();
+
+        /*if (Mage::getStoreConfig('rewardpoints/default/process_tax', Mage::app()->getStore()->getId()) == 1){
+            $order_details = $this->getQuote()->getSubtotalInclTax();
+        }*/
+
         $cart_amount = Mage::helper('rewardpoints/data')->convertMoneyToPoints($order_details);
 
         $customer_points_origin = $customer_points;
@@ -93,8 +136,16 @@ class Rewardpoints_Block_Coupon extends Mage_Checkout_Block_Cart_Abstract
                 break;
             }
             //check if credits always lower than total cart amount
-            $toHtml .= '<option value="'. $creditToBeAdded .'">'. $this->__("%d loyalty point(s)",$creditToBeAdded) .'</option>';
+            if ($slider){
+                $toHtmlArr[] = $creditToBeAdded;
+            } else {
+                $toHtml .= '<option value="'. $creditToBeAdded .'">'. $this->__("%d loyalty point(s)",$creditToBeAdded) .'</option>';
+            }
         }
+        if ($toHtmlArr != array()){
+            $toHtml = implode(',',$toHtmlArr);
+        }
+
         return $toHtml;
     }
 

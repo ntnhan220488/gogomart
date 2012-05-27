@@ -137,5 +137,23 @@ class Rewardpoints_Adminhtml_ClientpointsController extends Mage_Adminhtml_Contr
         $this->_redirect('*/*/index');
     }
 
+    public function exportCsvAction()
+    {
+        $fileName   = 'j2t_rewardpoints.csv';
+        $content    = $this->getLayout()->createBlock('rewardpoints/adminhtml_clientpoints_grid')
+            ->getCsvFile();
+
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
+    public function exportXmlAction()
+    {
+        $fileName   = 'j2t_rewardpoints.xml';
+        $content    = $this->getLayout()->createBlock('rewardpoints/adminhtml_clientpoints_grid')
+            ->getExcelFile();
+
+        $this->_prepareDownloadResponse($fileName, $content);
+    }
+
 
 }

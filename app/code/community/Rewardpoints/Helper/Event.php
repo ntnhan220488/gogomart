@@ -20,10 +20,10 @@ class Rewardpoints_Helper_Event extends Mage_Core_Helper_Abstract
 {
     
     public function setCreditPoints($points_value){
-        Mage::getSingleton('customer/session')->setCreditPoints($points_value);
+        Mage::getSingleton('rewardpoints/session')->setCreditPoints($points_value);
     }
 
     public function getCreditPoints(){
-        return Mage::getSingleton('customer/session')->getCreditPoints();
+        return ceil(Mage::getSingleton('rewardpoints/session')->getCreditPoints());
     }
 }

@@ -78,7 +78,7 @@ class Rewardpoints_Model_Referral extends Mage_Core_Model_Abstract
         //$email->setDesignConfig(array('area'=>'frontend', 'store'=>$this->getStoreId()));
 
 
-        $template = Mage::getStoreConfig(self::XML_PATH_SUBSCRIPTION_EMAIL_TEMPLATE, $this->getStoreId());
+        $template = Mage::getStoreConfig(self::XML_PATH_SUBSCRIPTION_EMAIL_TEMPLATE, Mage::app()->getStore()->getId());
         $recipient = array(
             'email' => $destination,
             'name'  => $destination_name
@@ -89,7 +89,7 @@ class Rewardpoints_Model_Referral extends Mage_Core_Model_Abstract
             'email' => strip_tags($parent->getEmail())
         );
 
-        $email->setDesignConfig(array('area'=>'frontend', 'store'=>$this->getStoreId()))
+        $email->setDesignConfig(array('area'=>'frontend', 'store'=> Mage::app()->getStore()->getId()))
                 ->sendTransactional(
                     $template,
                     $sender,
@@ -116,7 +116,7 @@ class Rewardpoints_Model_Referral extends Mage_Core_Model_Abstract
         $email = Mage::getModel('core/email_template');
         /* @var $email Mage_Core_Model_Email_Template */        
 
-        $template = Mage::getStoreConfig(self::XML_PATH_CONFIRMATION_EMAIL_TEMPLATE, $this->getStoreId());
+        $template = Mage::getStoreConfig(self::XML_PATH_CONFIRMATION_EMAIL_TEMPLATE, Mage::app()->getStore()->getId());
         $recipient = array(
             'email' => $destination,
             'name'  => $destination
@@ -124,7 +124,7 @@ class Rewardpoints_Model_Referral extends Mage_Core_Model_Abstract
 
         $sender  = Mage::getStoreConfig(self::XML_PATH_CONFIRMATION_EMAIL_IDENTITY);
 
-        $email->setDesignConfig(array('area'=>'frontend', 'store'=>$this->getStoreId()))
+        $email->setDesignConfig(array('area'=>'frontend', 'store'=>Mage::app()->getStore()->getId()))
                 ->sendTransactional(
                     $template,
                     $sender,
