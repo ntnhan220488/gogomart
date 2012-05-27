@@ -1,4 +1,4 @@
-body {
+body, .page-popup {
 background: url(../images/bg.gif) repeat-x 0 0;
 background-image: -ms-radial-gradient(center, circle farthest-corner, 0%, #2F081A 100%);
 background-image: -moz-radial-gradient(center, circle farthest-corner, #B534B3 0%, #2F081A 100%);

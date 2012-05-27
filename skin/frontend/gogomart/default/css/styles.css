@@ -95,7 +95,8 @@ ul,ol         { list-style:none; }
 .page {}
 .page-print { background:#fff; padding:25px 30px; text-align:left; }
 .page-empty { background:#fff; padding:20px; text-align:left; }
-.page-popup { background:#fff; padding:25px 30px; text-align:left; }
+.page-popup { padding:25px 30px; text-align:left;}
+.page-popup .container-popup {background-color: rgba(11,2,5,0.6);}
 .main-container { }
 .main { width:950px; margin:0 auto; min-height:400px; padding:25px 10px; background:#fffffe; text-align:left; }
 
@@ -683,13 +684,13 @@ tr.summary-details-excluded { font-style:italic; }
 .compare-table thead tr.first th,
 .compare-table thead tr.first td { border:0; background:none; padding:0; font-size:0; line-height:0; }
 .compare-table .btn-remove { float:right; background-image:url(../images/btn_remove2.gif); width:72px; height:15px; }
-.compare-table tbody th { background:#d9e5ee url(../images/bkg_th-v.gif) 100% 0 repeat-y; }
+.compare-table tbody th { background-color: rgba(11,2,5,0.6); }
 .compare-table tbody th,
 .compare-table tbody td { padding:10px; border:0; border-top:1px solid #ccc; border-left:1px solid #ccc; }
 .compare-table tbody td.last { border-right:1px solid #ccc; }
 .compare-table tbody tr.last th,
-.compare-table tbody tr.last td { border-bottom:1px solid #ccc !important; }
-.compare-table tr.add-to-row td { background:#fffada; text-align:center; }
+.compare-table tbody tr.last td { background:#2F081A; border-bottom:1px solid #ccc !important; }
+.compare-table tr.add-to-row td { text-align:center; }
 .compare-table tr.first td { text-align:center; }
 .compare-table tr.first td .product-name { font-size:13px; font-weight:bold; margin:0 0 5px; color:#203548; }
 .compare-table tr.first td .product-name a { color:#203548; }
